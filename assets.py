@@ -1,4 +1,8 @@
-#test
-class Assets:
-    def __init__(self, screen, screen_width, screen_height):
+import pygame
+from pygame.sprite import Sprite
+
+class Board(Sprite):
+    def __init__(self, screen):
+        self.screen = screen
+        self.image = pygame.image.load('images')
 
