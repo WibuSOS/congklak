@@ -62,30 +62,107 @@ def game():
                 playing = p2
                 not_playing = p1
 
-            print(playing[3])
+            playing_for_turn = True
+            while playing_for_turn:
+                print(playing[3])
+                index_not_allowed = True
+                while index_not_allowed: #to check if the taken hole is valid
+                    chosen_index = int(input("Choose which small hole you want to take: ")) - 1
+                    if chosen_index > 15:
+                        print("index out of bound")
+                        continue
 
-            index_not_allowed = True
-            while index_not_allowed: #to check if the taken hole is valid
-                chosen_index = int(input("Choose which small hole you want to take: ")) - 1
-                if chosen_index <= 15:
-                    if congklak_data[chosen_index][1] > 0 and chosen_index != 0 and chosen_index != 8:
-                        playing[1] = congklak_data[chosen_index][1]
-                        congklak_data[chosen_index][1] = 0
-                        index_not_allowed = False
-                    else:
-                        print("This hole is empty/can't be chosen, choose another one")
-                else:
-                    print("index hole is out of bound")
-            
-            while playing[1] > 0: #to spread the shells in hand until none left
-                chosen_index += 1
-                if chosen_index > 15:
-                    chosen_index = 0
-                congklak_data[chosen_index][1] += 1
-                playing[1] -= 1
+                    if playing[3] == "p1":
+                        if congklak_data[chosen_index][1] > 0 and 0 < chosen_index < 8:
+                            playing[1] = congklak_data[chosen_index][1]
+                            congklak_data[chosen_index][1] = 0
+                            index_not_allowed = False
+                        else:
+                            print("This hole is empty/can't be chosen for %s, choose another one" % playing[3])
+                    elif playing[3] == "p2":
+                        if congklak_data[chosen_index][1] > 0 and 8 < chosen_index <= 15:
+                            playing[1] = congklak_data[chosen_index][1]
+                            congklak_data[chosen_index][1] = 0
+                            index_not_allowed = False
+                        else:
+                            print("This hole is empty/can't be chosen for %s, choose another one" % playing[3])
+                        
+                while playing[1] > 0: #to spread the shells in hand until none left
+                    chosen_index += 1
+                    if chosen_index > 15:
+                        chosen_index = 0
+
+                    # to check if the current index is at enemy's home index
+                    if playing[3] == "p1" and chosen_index == 8:
+                        continue
+                    elif playing[3] == "p2" and chosen_index == 0:
+                        continue
+
+                    debug(chosen_index, playing, congklak_data)
+
+                    if playing[1] == 1:
+                        if congklak_data[chosen_index][1] > 0: #lanjut main -> mulai dari index berikutnya
+                            playing[1] += congklak_data[chosen_index][1]
+                            congklak_data[chosen_index][1] = 0
+                            debug(chosen_index, playing, congklak_data, "test kalo biji jatuh di tempat yang ada bijinya")
+                            continue
+                        elif playing[3] == "p1":
+                            if chosen_index > 8 and chosen_index <= 15 and congklak_data[chosen_index][1] == 0: #lubang kosong lawan -> end
+                                playing_for_turn = False
+                                pass
+                            elif chosen_index > 0 and chosen_index < 8 and congklak_data[chosen_index][1] == 0:
+                                #lubang kosong pemain saat ini -> ambil milik lawan seberang -> masukkan ke dalam markas pemain saat ini -> end
+                                congklak_data[0][1] = congklak_data[0][1] + playing[1] + congklak_data[-abs(chosen_index)][1]
+                                playing[1] = 0
+                                congklak_data[chosen_index][1] = 0
+                                congklak_data[-abs(chosen_index)][1] = 0
+                                playing_for_turn = False
+                                debug_1(chosen_index, -abs(chosen_index), playing, congklak_data, "test kalo jatuh di lubang kecil yang main")
+                                continue
+                            elif chosen_index == 0:
+                                #lubang terakhir == markas pemain saat ini -> pilih lubang untuk bermain lagi -> mulai dari index berikutnya
+                                pass
+                        elif playing[3] == "p2":
+                            if chosen_index > 0 and chosen_index < 8 and congklak_data[chosen_index][1] == 0: #lubang kosong lawan -> end
+                                playing_for_turn = False
+                                pass
+                            elif chosen_index > 8 and chosen_index <= 15 and congklak_data[chosen_index][1] == 0:
+                                #lubang kosong pemain saat ini -> ambil milik lawan seberang -> masukkan ke dalam markas pemain saat ini -> end
+                                congklak_data[8][1] = congklak_data[8][1] + playing[1] + congklak_data[len(congklak_data) - chosen_index][1]
+                                playing[1] = 0
+                                congklak_data[chosen_index][1] = 0
+                                congklak_data[len(congklak_data) - chosen_index][1] = 0
+                                playing_for_turn = False
+                                debug_1(chosen_index, len(congklak_data) - chosen_index, playing, congklak_data, "test kalo jatuh di lubang kecil yang main")
+                                continue
+                            elif chosen_index == 8:
+                                #lubang terakhir == markas pemain saat ini -> pilih lubang untuk bermain lagi -> mulai dari index berikutnya
+                                pass
+
+                    congklak_data[chosen_index][1] += 1
+                    playing[1] -= 1
+                    debug(chosen_index, playing, congklak_data)
 
             #to switch player on the next turn
             playing[0] = False
             not_playing[0] = True
+
+def debug(chosen_index, playing, congklak_data, test_status = "default test"):
+    print("\n" + test_status)
+    print("index sekarang:", chosen_index)
+    print("biji di index sekarang:", congklak_data[chosen_index][1])
+    print("biji di tangan pemain %s: %d" %(playing[3], playing[1]))
+
+def debug_1(chosen_index, chosen_index_oposite, playing, congklak_data, test_status = "default test"):
+    print("\n" + test_status)
+    print("index sekarang:", chosen_index)
+    print("index seberang:", chosen_index_oposite)
+    print("biji di index sekarang:", congklak_data[chosen_index][1])
+    print("biji di index seberang:", congklak_data[chosen_index_oposite][1])
+    print("biji di tangan pemain %s: %d" %(playing[3], playing[1]))
+    if playing[3] == "p1":
+        print("biji di markas pemain %s: %d" %(playing[3], congklak_data[0][1]))
+    else:
+        print("biji di markas pemain %s: %d" %(playing[3], congklak_data[8][1]))
 
 game()
