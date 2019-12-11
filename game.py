@@ -1,22 +1,33 @@
-# from pygame.mixer import *
+import pygame
+import sys
+from pygame.mixer import *
 # import time
 # import random
-# from assets import Assets
+from assets import *
+from settings import Settings
+from assets import *
 
 # def game(screen,screen_width,screen_height):
 def game():
+    pygame.init()
+    game_settings = Settings()
+    pygame.display.set_caption("Congklak")
+    screen = pygame.display.set_mode((game_settings.screen_height, game_settings.screen_width))
+    
     #Music & sound effects
         #your codes here
     
     #Background
-        #your codes here
+    background = pygame.image.load('images/menubag.png')
     
     #Sprites
         #your codes here
 
     #Buttons & signs
-        #your codes here
-    
+    start = Button("images/play.png",[100,500],*[93,46],*[100,56])
+    terminate = Button("images/quit.png",[100,600],*[95,46],*[102,56])
+    menu = Group(start,terminate)
+
     #Data structure
     congklak_data = [[["pos1"],0],[["pos2"],5],[["pos3"],5],[["pos4"],5],[["pos5"],5]
                     ,[["pos6"],5],[["pos7"],5],[["pos8"],5],[["pos9"],0],[["pos10"],5]
@@ -31,61 +42,79 @@ def game():
     
     running = True
     while running:
-        small_holes = 0 #total number of shells in all small holes
-        
-        index_hole = 0
-        while index_hole <= 15: #to sum up small holes
-            if index_hole == 0 or index_hole == 8:
-                pass
-            else:
-                small_holes += congklak_data[index_hole][1]
-            index_hole += 1
-        
-        if small_holes == 0: #winning check
-            if congklak_data[0][1] > congklak_data[8][1]:
-                p1[2] = 1
-                print("Player 1 wins")
-            elif congklak_data[0][1] == congklak_data[8][1]:
-                p1[2] = 1
-                p2[2] = 1
-                print("Draw")
-            else:
-                p2[2] = 1
-                print("Player 2 wins")
-            running = False
-        
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
+        menu.draw(screen)
+        for command in event.get():
+            if command.type == QUIT:
+                running = False
+                pygame.quit()
+
+        if start.rect.collidepoint(mouse.get_pos()):
+            start.mouseover()
         else:
-            if p1[0]: #to check which player goes for this turn
-                playing = p1
-                not_playing = p2
-            else:
-                playing = p2
-                not_playing = p1
+            start.mouseout()
+        if terminate.rect.collidepoint(mouse.get_pos()):
+            terminate.mouseover()
+        else:
+            terminate.mouseout()
 
-            print(playing[3])
-
-            index_not_allowed = True
-            while index_not_allowed: #to check if the taken hole is valid
-                chosen_index = int(input("Choose which small hole you want to take: ")) - 1
-                if chosen_index <= 15:
-                    if congklak_data[chosen_index][1] > 0 and chosen_index != 0 and chosen_index != 8:
-                        playing[1] = congklak_data[chosen_index][1]
-                        congklak_data[chosen_index][1] = 0
-                        index_not_allowed = False
-                    else:
-                        print("This hole is empty/can't be chosen, choose another one")
-                else:
-                    print("index hole is out of bound")
-            
-            while playing[1] > 0: #to spread the shells in hand until none left
-                chosen_index += 1
-                if chosen_index > 15:
-                    chosen_index = 0
-                congklak_data[chosen_index][1] += 1
-                playing[1] -= 1
-
-            #to switch player on the next turn
-            playing[0] = False
-            not_playing[0] = True
+        # small_holes = 0 #total number of shells in all small holes
+        #
+        # index_hole = 0
+        # while index_hole <= 15: #to sum up small holes
+        #     if index_hole == 0 or index_hole == 8:
+        #         pass
+        #     else:
+        #         small_holes += congklak_data[index_hole][1]
+        #     index_hole += 1
+        #
+        # if small_holes == 0: #winning check
+        #     if congklak_data[0][1] > congklak_data[8][1]:
+        #         p1[2] = 1
+        #         print("Player 1 wins")
+        #     elif congklak_data[0][1] == congklak_data[8][1]:
+        #         p1[2] = 1
+        #         p2[2] = 1
+        #         print("Draw")
+        #     else:
+        #         p2[2] = 1
+        #         print("Player 2 wins")
+        #     running = False
+        #
+        # else:
+        #     if p1[0]: #to check which player goes for this turn
+        #         playing = p1
+        #         not_playing = p2
+        #     else:
+        #         playing = p2
+        #         not_playing = p1
+        #
+        #     print(playing[3])
+        #
+        #     index_not_allowed = True
+        #     while index_not_allowed: #to check if the taken hole is valid
+        #         chosen_index = int(input("Choose which small hole you want to take: ")) - 1
+        #         if chosen_index <= 15:
+        #             if congklak_data[chosen_index][1] > 0 and chosen_index != 0 and chosen_index != 8:
+        #                 playing[1] = congklak_data[chosen_index][1]
+        #                 congklak_data[chosen_index][1] = 0
+        #                 index_not_allowed = False
+        #             else:
+        #                 print("This hole is empty/can't be chosen, choose another one")
+        #         else:
+        #             print("index hole is out of bound")
+        #
+        #     while playing[1] > 0: #to spread the shells in hand until none left
+        #         chosen_index += 1
+        #         if chosen_index > 15:
+        #             chosen_index = 0
+        #         congklak_data[chosen_index][1] += 1
+        #         playing[1] -= 1
+        #
+        #     #to switch player on the next turn
+        #     playing[0] = False
+        #     not_playing[0] = True
+        display.update()
 
 game()
