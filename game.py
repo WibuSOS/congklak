@@ -9,25 +9,7 @@ from assets import *
 
 # def game(screen,screen_width,screen_height):
 def game():
-    pygame.init()
-    game_settings = Settings()
-    pygame.display.set_caption("Congklak")
-    screen = pygame.display.set_mode((game_settings.screen_height, game_settings.screen_width))
     
-    #Music & sound effects
-        #your codes here
-    
-    #Background
-    background = pygame.image.load('images/menubag.png')
-    
-    #Sprites
-        #your codes here
-
-    #Buttons & signs
-    start = Button("images/play.png",[100,500],*[93,46],*[100,56])
-    terminate = Button("images/quit.png",[100,600],*[95,46],*[102,56])
-    menu = Group(start,terminate)
-
     #Data structure
     congklak_data = [[["pos1"],0],[["pos2"],5],[["pos3"],5],[["pos4"],5],[["pos5"],5]
                     ,[["pos6"],5],[["pos7"],5],[["pos8"],5],[["pos9"],0],[["pos10"],5]
@@ -42,25 +24,9 @@ def game():
     
     running = True
     while running:
-        screen.fill((0,0,0))
-        screen.blit(background,(0,0))
-        menu.draw(screen)
-        for command in event.get():
-            if command.type == QUIT:
-                running = False
-                pygame.quit()
-
-        if start.rect.collidepoint(mouse.get_pos()):
-            start.mouseover()
-        else:
-            start.mouseout()
-        if terminate.rect.collidepoint(mouse.get_pos()):
-            terminate.mouseover()
-        else:
-            terminate.mouseout()
-
-        small_holes = 0 #total number of shells in all small holes
         
+        small_holes = 0 #total number of shells in all small holes
+
         index_hole = 0
         while index_hole <= 15: #to sum up small holes
             if index_hole == 0 or index_hole == 8:
@@ -68,7 +34,7 @@ def game():
             else:
                 small_holes += congklak_data[index_hole][1]
             index_hole += 1
-        
+
         if small_holes == 0: #winning check
             if congklak_data[0][1] > congklak_data[8][1]:
                 p1[2] = 1
@@ -81,7 +47,7 @@ def game():
                 p2[2] = 1
                 print("Player 2 wins")
             running = False
-        
+
         else:
             if p1[0]: #to check which player goes for this turn
                 playing = p1
@@ -114,7 +80,7 @@ def game():
                             index_not_allowed = False
                         else:
                             print("This hole is empty/can't be chosen for %s, choose another one" % playing[3])
-                        
+
                 while playing[1] > 0: #to spread the shells in hand until none left
                     chosen_index += 1
                     if chosen_index > 15:
@@ -170,8 +136,6 @@ def game():
                     congklak_data[chosen_index][1] += 1
                     playing[1] -= 1
                     debug(chosen_index, playing, congklak_data)
-        
-        display.update()
 
 def debug(chosen_index, playing, congklak_data, test_status = "default test"):
     print("\n" + test_status)
