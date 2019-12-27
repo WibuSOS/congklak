@@ -5,7 +5,7 @@ class AI:
     def __init__(self):
         pass
 
-    def checkLegalMoves(self, node):
+    def checkLegalMoves(self, node): # TODO Selesaikan fungsi checkLegalMoves
         node_data = []
         # self.game_node = node
         small_holes = 0 #total number of shells in all small holes
@@ -33,10 +33,10 @@ class AI:
         
         return len(node_data), node_data
     
-    def commitMove(self, parameter_list):
+    def commitMove(self, parameter_list): # TODO Selesaikan fungsi commitMove
         pass
     
-    def checkFreeTurn(self, child):
+    def checkFreeTurn(self, child): # TODO Selesaikan argumen if-else
         if True: # posisi awal di lubang kecil yang ada bijinya
             child_data = []
             possible_child = len(child_data)
@@ -55,8 +55,9 @@ class AI:
         pass
     
     def minimax(self, node, depth, maximizingPlayer, freeTurn, freeTurnData):
-        if depth == 0: # or node is a terminal node
-            return self.heuristicNode(node) # the heuristic value of node
+        if depth == 0: # TODO Definisikan node akhir itu seperti apa
+            return self.heuristicNode(node) # TODO (1) Cari cara biar AI-nya tau arah mana yang dipilih, bukan hanya nilainya
+            # the heuristic value of node
         
         if maximizingPlayer:
             bestValue = int
@@ -78,7 +79,7 @@ class AI:
                 val = minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
                 bestValue = max(bestValue, val)
             
-            return bestValue
+            return bestValue # TODO (2) Cari cara biar AI-nya tau arah mana yang dipilih, bukan hanya nilainya
         else:
             bestValue = int
             if freeTurn:
@@ -99,4 +100,4 @@ class AI:
                 val = minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
                 bestValue = min(bestValue, val)
             
-            return bestValue
+            return bestValue # TODO (3) Cari cara biar AI-nya tau arah mana yang dipilih, bukan hanya nilainya
