@@ -6,9 +6,10 @@ from pygame.mixer import *
 from assets import *
 from settings import Settings
 from assets import *
+from AI import *
 
 # def game(screen,screen_width,screen_height):
-def game():
+def game(mode="single"):
     
     #Data structure
     congklak_data = [[["pos1"],0],[["pos2"],5],[["pos3"],5],[["pos4"],5],[["pos5"],5]
@@ -16,7 +17,10 @@ def game():
                     ,[["pos11"],5],[["pos12"],5],[["pos13"],5],[["pos14"],5],[["pos15"],5]
                     ,[["pos16"],5]]
     p1 = [True, 0, 0, "p1"]
-    p2 = [False, 0, 0, "p2"]
+    if mode == "single":
+        p2 = [False, 0, 0, "AI", AI()]
+    elif mode == "multi":
+        p2 = [False, 0, 0, "p2"]
     playing = [] #for in-game
     not_playing = [] #for in-game
 
@@ -155,4 +159,5 @@ def debug_1(chosen_index, chosen_index_oposite, playing, congklak_data, test_sta
     else:
         print("biji di markas pemain %s: %d" %(playing[3], congklak_data[8][1]))
 
-game()
+if __name__ == "__main__":
+    game("multi")
