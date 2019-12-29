@@ -43,7 +43,10 @@ class AI:
             childFreeTurn = True
         elif True: # posisi awal di lubang besar milik pribadi
             possible_child, child_data = self.checkLegalMoves(child)
-            childFreeTurn = True
+            if possible_child == 0:
+                childFreeTurn = False
+            else:
+                childFreeTurn = True
         else: # posisi awal di lubang yang mengakhiri giliran
             child_data = []
             possible_child = len(child_data)
@@ -55,20 +58,29 @@ class AI:
         pass
     
     def minimax(self, node, depth, maximizingPlayer, freeTurn, freeTurnData):
-        if depth == 0: # TODO Definisikan node akhir itu seperti apa
-            return self.heuristicNode(node) # TODO (1) Cari cara biar AI-nya tau arah mana yang dipilih, bukan hanya nilainya
-            # the heuristic value of node
+        if depth == 0: # TODO Definisikan node akhir itu seperti apa: kalau semua lumbung kecil tidak ada biji
+            return self.heuristicNode(node), [None] # the heuristic value of node
         
         if maximizingPlayer:
-            bestValue = int
+            bestValue = None
+            bestDirection = []
+
             if freeTurn:
                 possible_child, node_data = freeTurnData[0], freeTurnData[1]
             else:
                 possible_child, node_data = self.checkLegalMoves(node)
+                if possible_child == 0:
+                    isMax = False
+                    childFreeTurn = False
+                    child_data = []
+                    child_possibilities = len(child_data)
+                    val, direction = minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data])
+                    bestValue = val
+                    bestDirection += direction
 
             for i in range(possible_child): # each child of node
-                # do implementation of child node here
                 child = node.copy()
+                # TODO implementation of child node here
                 childFreeTurn, child_possibilities, child_data = self.checkFreeTurn(child)
                 
                 if childFreeTurn: # here is a small change
@@ -76,16 +88,35 @@ class AI:
                 else:
                     isMax = False
                 
-                val = minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
-                bestValue = max(bestValue, val)
+                val, direction = minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
+
+                if bestValue is None:
+                    bestValue = val
+                    bestDirection = bestDirection + ["Direction ke anak ini"] + direction
+                else:
+                    if val > bestValue:
+                        del bestDirection[:]
+                        bestDirection = bestDirection + ["Direction ke anak ini"] + direction
+                    
+                    bestValue = max(bestValue, val)
             
-            return bestValue # TODO (2) Cari cara biar AI-nya tau arah mana yang dipilih, bukan hanya nilainya
+            return bestValue, bestDirection
         else:
-            bestValue = int
+            bestValue = None
+            bestDirection = []
+            
             if freeTurn:
                 possible_child, node_data = freeTurnData[0], freeTurnData[1]
             else:
                 possible_child, node_data = self.checkLegalMoves(node)
+                if possible_child == 0:
+                    isMax = True
+                    childFreeTurn = False
+                    child_data = []
+                    child_possibilities = len(child_data)
+                    val, direction = minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data])
+                    bestValue = val
+                    bestDirection += direction
 
             for i in range(possible_child): # each child of node
                 # do implementation of child node here
@@ -97,7 +128,16 @@ class AI:
                 else:
                     isMax = True
                 
-                val = minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
-                bestValue = min(bestValue, val)
+                val, direction = minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
+
+                if bestValue is None:
+                    bestValue = val
+                    bestDirection = bestDirection + ["Direction ke anak ini"] + direction
+                else:
+                    if val < bestValue:
+                        del bestDirection[:]
+                        bestDirection = bestDirection + ["Direction ke anak ini"] + direction
+                
+                    bestValue = min(bestValue, val)
             
-            return bestValue # TODO (3) Cari cara biar AI-nya tau arah mana yang dipilih, bukan hanya nilainya
+            return bestValue, bestDirection

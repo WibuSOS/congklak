@@ -28,10 +28,9 @@ def game(mode="single"):
     
     running = True
     while running:
-        
         small_holes = 0 #total number of shells in all small holes
-
         index_hole = 0
+        
         while index_hole <= 15: #to sum up small holes
             if index_hole == 0 or index_hole == 8:
                 pass
@@ -63,6 +62,22 @@ def game(mode="single"):
             playing_for_turn = True
             while playing_for_turn:
                 print(playing[3])
+                
+                small_holes = 0 #total number of shells in current player's small holes
+                if playing[3] == "p1":
+                    index_hole = 1
+                    while index_hole < 8: #to sum up small holes
+                        small_holes += congklak_data[index_hole][1]
+                        index_hole += 1
+                elif playing[3] == "p2":
+                    index_hole = 9
+                    while index_hole <= 15: #to sum up small holes
+                        small_holes += congklak_data[index_hole][1]
+                        index_hole += 1
+                if small_holes == 0:
+                    playing_for_turn = False
+                    continue
+                
                 index_not_allowed = True
                 while index_not_allowed: #to check if the taken hole is valid
                     chosen_index = int(input("Choose which small hole you want to take: ")) - 1
@@ -140,6 +155,10 @@ def game(mode="single"):
                     congklak_data[chosen_index][1] += 1
                     playing[1] -= 1
                     debug(chosen_index, playing, congklak_data)
+            
+            #to switch player on the next turn
+            playing[0] = False
+            not_playing[0] = True
 
 def debug(chosen_index, playing, congklak_data, test_status = "default test"):
     print("\n" + test_status)
