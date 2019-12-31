@@ -11,16 +11,16 @@ from AI import *
 # def game(screen,screen_width,screen_height):
 def game(mode="single"):
     
-    #Data structure
+    # Data structure
     congklak_data = [[["pos1"],0],[["pos2"],5],[["pos3"],5],[["pos4"],5],[["pos5"],5]
                     ,[["pos6"],5],[["pos7"],5],[["pos8"],5],[["pos9"],0],[["pos10"],5]
                     ,[["pos11"],5],[["pos12"],5],[["pos13"],5],[["pos14"],5],[["pos15"],5]
                     ,[["pos16"],5]]
-    p1 = [True, 0, 0, "p1"]
     if mode == "single":
-        p2 = [False, 0, 0, "AI", AI()]
+        p1 = [True, 0, 0, "p1", AI()]
     elif mode == "multi":
-        p2 = [False, 0, 0, "p2"]
+        p1 = [True, 0, 0, "p1"]
+    p2 = [False, 0, 0, "p2"]
     playing = [] #for in-game
     not_playing = [] #for in-game
 
@@ -80,7 +80,13 @@ def game(mode="single"):
                 
                 index_not_allowed = True
                 while index_not_allowed: #to check if the taken hole is valid
-                    chosen_index = int(input("Choose which small hole you want to take: ")) - 1
+                    if mode == "multi" or playing[3] == "p2":
+                        chosen_index = int(input("Choose which small hole you want to take: ")) - 1
+                    elif mode == "single" and playing[3] == "p1":
+                        print("Ori:", congklak_data)
+                        chosen_index = playing[4].commitMove(congklak_data)
+                        print("Ori:", congklak_data, "\nChosen index:", chosen_index)
+
                     if chosen_index > 15:
                         print("index out of bound")
                         continue
@@ -114,7 +120,7 @@ def game(mode="single"):
                     debug(chosen_index, playing, congklak_data)
 
                     if playing[1] == 1: #action yang dilakukan ketika biji di tangan tersisa 1
-                        if congklak_data[chosen_index][1] > 0: #lanjut main -> mulai dari index berikutnya
+                        if congklak_data[chosen_index][1] > 0 and chosen_index != 0 and chosen_index != 8: #lanjut main -> mulai dari index berikutnya
                             playing[1] += congklak_data[chosen_index][1]
                             congklak_data[chosen_index][1] = 0
                             debug(chosen_index, playing, congklak_data, "test kalo biji jatuh di tempat yang ada bijinya")
@@ -179,4 +185,4 @@ def debug_1(chosen_index, chosen_index_oposite, playing, congklak_data, test_sta
         print("biji di markas pemain %s: %d" %(playing[3], congklak_data[8][1]))
 
 if __name__ == "__main__":
-    game("multi")
+    game()
