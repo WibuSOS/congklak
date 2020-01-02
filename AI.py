@@ -1,13 +1,15 @@
-# import sklearn
-from copy import *
+from copy import deepcopy
+from math import inf as infinity
 
-class AI:
-    depth = 4
+class AI_Minimax:
+    depth = int()
     maximizingPlayer = True
     expandedNode = 0
+    pruning = bool()
     
-    def __init__(self):
-        pass
+    def __init__(self, depth, pruning=False):
+        self.depth = depth
+        self.pruning = pruning
 
     def checkLegalMoves(self, node, maximizingPlayer):
         node_data = []
@@ -79,18 +81,18 @@ class AI:
         if maximizingPlayer:
             print("AI turn")
         else:
-            print("Human turn")
+            print("Enemy turn")
         print("Depth:", depth, "\n")
         print("Expanded node:", self.expandedNode)
     
-    def minimax(self, node, depth, maximizingPlayer, freeTurn, freeTurnData):
+    def minimax(self, node, depth, maximizingPlayer, freeTurn, freeTurnData, alpha=-infinity, beta=infinity):
         self.expandedNode += 1
         self.debugPrint(maximizingPlayer, depth)
         if self.terminalCheck(depth, node):
             return self.heuristicNode(node), [None] # the heuristic value of node
         
         if maximizingPlayer:
-            bestValue = None
+            bestValue = -infinity
             bestDirection = []
 
             if freeTurn:
@@ -102,7 +104,10 @@ class AI:
                     childFreeTurn = False
                     child_data = []
                     child_possibilities = len(child_data)
-                    val, direction = self.minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data])
+                    if self.pruning:
+                        val, direction = self.minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data], alpha, beta)
+                    else:
+                        val, direction = self.minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data])
                     bestValue = val
                     bestDirection += direction
             
@@ -138,21 +143,24 @@ class AI:
                 else:
                     isMax = False
                 
-                val, direction = self.minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
-                
-                if bestValue == None:
-                    bestValue = val
-                    bestDirection = bestDirection + [node_data[index]] + direction
+                if self.pruning:
+                    val, direction = self.minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data], alpha, beta)
                 else:
-                    if val > bestValue:
-                        del bestDirection[:]
-                        bestDirection = bestDirection + [node_data[index]] + direction
-                    
-                    bestValue = max(bestValue, val)
+                    val, direction = self.minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
+                
+                if val > bestValue:
+                    del bestDirection[:]
+                    bestDirection = bestDirection + [node_data[index]] + direction
+                
+                bestValue = max(bestValue, val)
+                if self.pruning:
+                    alpha = max(alpha, bestValue)
+                    if beta <= alpha:
+                        break
             
             return bestValue, bestDirection
         else:
-            bestValue = None
+            bestValue = infinity
             bestDirection = []
             
             if freeTurn:
@@ -164,7 +172,10 @@ class AI:
                     childFreeTurn = False
                     child_data = []
                     child_possibilities = len(child_data)
-                    val, direction = self.minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data])
+                    if self.pruning:
+                        val, direction = self.minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data], alpha, beta)
+                    else:
+                        val, direction = self.minimax(node, depth, isMax, childFreeTurn, [child_possibilities, child_data])
                     bestValue = val
                     bestDirection += direction
             
@@ -199,17 +210,19 @@ class AI:
                     isMax = False
                 else:
                     isMax = True
-                
-                val, direction = self.minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
-
-                if bestValue == None:
-                    bestValue = val
-                    bestDirection = bestDirection + [node_data[index]] + direction
+                if self.pruning:
+                    val, direction = self.minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data], alpha, beta)
                 else:
-                    if val < bestValue:
-                        del bestDirection[:]
-                        bestDirection = bestDirection + [node_data[index]] + direction
+                    val, direction = self.minimax(child, depth - 1, isMax, childFreeTurn, [child_possibilities, child_data])
                 
-                    bestValue = min(bestValue, val)
+                if val < bestValue:
+                    del bestDirection[:]
+                    bestDirection = bestDirection + [node_data[index]] + direction
+                
+                bestValue = min(bestValue, val)
+                if self.pruning:
+                    beta = min(beta, bestValue)
+                    if beta <= alpha:
+                        break
             
             return bestValue, bestDirection

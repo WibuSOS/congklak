@@ -5,7 +5,6 @@ from pygame.mixer import *
 # import random
 from assets import *
 from settings import Settings
-from assets import *
 from AI import *
 
 # def game(screen,screen_width,screen_height):
@@ -17,7 +16,7 @@ def game(mode="single"):
                     ,[["pos11"],5],[["pos12"],5],[["pos13"],5],[["pos14"],5],[["pos15"],5]
                     ,[["pos16"],5]]
     if mode == "single":
-        p1 = [True, 0, 0, "p1", AI()]
+        p1 = [True, 0, 0, "p1", AI_Minimax(7, pruning=True)]
     elif mode == "multi":
         p1 = [True, 0, 0, "p1"]
     p2 = [False, 0, 0, "p2"]
