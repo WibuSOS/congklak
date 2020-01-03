@@ -3,12 +3,13 @@ from math import inf as infinity
 
 class AI_Minimax:
     depth = int()
-    maximizingPlayer = True
+    maximizingPlayer = bool()
     expandedNode = 0
     pruning = bool()
     
-    def __init__(self, depth, pruning=False):
+    def __init__(self, depth, maximizingPlayer=True, pruning=False):
         self.depth = depth
+        self.maximizingPlayer = maximizingPlayer
         self.pruning = pruning
 
     def checkLegalMoves(self, node, maximizingPlayer):
@@ -63,7 +64,7 @@ class AI_Minimax:
         else:
             return False
     
-    def heuristicNode(self, node):
+    def heuristicNode(self, node): # TODO ubah heuristic agar bisa dipakai di 2 sisi
         return node[0][1]
     
     def commitMove(self, node):
@@ -71,17 +72,15 @@ class AI_Minimax:
         childFreeTurn = False
         child_data = []
         child_possibilities = len(child_data)
-        # print("Node in commitMove(before):", node)
         bestValue, bestDirection = self.minimax(node, self.depth, self.maximizingPlayer, childFreeTurn, [child_possibilities, child_data])
         print("commitMove:", bestValue, bestDirection)
-        # print("Node in commitMove(after):", node)
         return bestDirection.pop(0)
     
     def debugPrint(self, maximizingPlayer, depth):
         if maximizingPlayer:
-            print("AI turn")
+            print("P1 turn")
         else:
-            print("Enemy turn")
+            print("P2 turn")
         print("Depth:", depth, "\n")
         print("Expanded node:", self.expandedNode)
     
@@ -226,3 +225,114 @@ class AI_Minimax:
                         break
             
             return bestValue, bestDirection
+
+class AI_Negamax(AI_Minimax):
+    player = int()
+
+    def __init__(self, depth, player=1, pruning=False):
+        self.player = player
+        if player == 1:
+            maximizingPlayer = True
+        elif player == -1:
+            maximizingPlayer = False
+        super().__init__(depth, maximizingPlayer=maximizingPlayer, pruning=pruning)
+    
+    def commitMove(self, node):
+        print("AI thinking...")
+        childFreeTurn = False
+        child_data = []
+        child_possibilities = len(child_data)
+        bestValue, bestDirection = self.negamax(node, self.depth, self.player, childFreeTurn, [child_possibilities, child_data])
+        print("commitMove:", bestValue, bestDirection)
+        return bestDirection.pop(0)
+    
+    def negamax(self, node, depth, player, freeTurn, freeTurnData, α=-infinity, β=infinity):
+        if player == 1:
+            maximizingPlayer = True
+        elif player == -1:
+            maximizingPlayer = False
+        
+        self.expandedNode += 1
+        self.debugPrint(maximizingPlayer, depth)
+        if self.terminalCheck(depth, node):
+            return player * self.heuristicNode(node), [None] # the heuristic value of node
+        
+        bestValue = -infinity
+        bestDirection = []
+        # child = orderMoves(childNodes)
+        
+        if freeTurn:
+                possible_child, node_data = freeTurnData[0], freeTurnData[1]
+        else:
+            possible_child, node_data = self.checkLegalMoves(node, maximizingPlayer)
+            if possible_child == 0:
+                childFreeTurn = False
+                child_data = []
+                child_possibilities = len(child_data)
+                if self.pruning:
+                    value, direction = self.negamax(node, depth, -player, childFreeTurn, [child_possibilities, child_data], -α, -β)
+                else:
+                    value, direction = self.negamax(node, depth, -player, childFreeTurn, [child_possibilities, child_data])
+                bestValue = -value
+                bestDirection += direction
+        
+        for index in range(possible_child):
+            child = deepcopy(node)
+            lastIndex = node_data[index]
+            hand = child[lastIndex][1]
+            child[lastIndex][1] = 0
+
+            while hand > 0: # to spread the shells in hand until none left
+                lastIndex += 1
+                if lastIndex > 15:
+                    lastIndex = 0
+                
+                if maximizingPlayer:
+                    if lastIndex == 8: # to check if the current index is at enemy's home index
+                        continue
+                    
+                    if hand == 1 and 0 < lastIndex < 8 and child[lastIndex][1] == 0:
+                        child[0][1] = child[0][1] + hand + child[-abs(lastIndex)][1]
+                        hand = 0
+                        child[lastIndex][1] = 0
+                        child[-abs(lastIndex)][1] = 0
+                        continue
+                else:
+                    if lastIndex == 0: # to check if the current index is at enemy's home index
+                        continue
+
+                    if hand == 1 and 8 < lastIndex <= 15 and child[lastIndex][1] == 0:
+                        child[8][1] = child[8][1] + hand + child[len(child) - lastIndex][1]
+                        hand = 0
+                        child[lastIndex][1] = 0
+                        child[len(child) - lastIndex][1] = 0
+                        continue
+                
+                child[lastIndex][1] += 1
+                hand -= 1
+            
+            childFreeTurn, child_possibilities, child_data = self.checkFreeTurn(child, lastIndex, maximizingPlayer)
+
+            if childFreeTurn: # here is a small change
+                if self.pruning:
+                    value, direction = self.negamax(child, depth - 1, player, childFreeTurn, [child_possibilities, child_data], α, β)
+                else:
+                    value, direction = self.negamax(child, depth - 1, player, childFreeTurn, [child_possibilities, child_data])
+            else:
+                if self.pruning:
+                    value, direction = self.negamax(child, depth - 1, -player, childFreeTurn, [child_possibilities, child_data], -α, -β)
+                else:
+                    value, direction = self.negamax(child, depth - 1, -player, childFreeTurn, [child_possibilities, child_data])
+                value = -value
+            
+            if value > bestValue:
+                del bestDirection[:]
+                bestDirection = bestDirection + [node_data[index]] + direction
+            
+            bestValue = max(bestValue, value)
+            if self.pruning:
+                α = max(α, bestValue)
+                if α >= β:
+                    break # (* cut-off *)
+        
+        return bestValue, bestDirection

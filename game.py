@@ -15,11 +15,12 @@ def game(mode="single"):
                     ,[["pos6"],5],[["pos7"],5],[["pos8"],5],[["pos9"],0],[["pos10"],5]
                     ,[["pos11"],5],[["pos12"],5],[["pos13"],5],[["pos14"],5],[["pos15"],5]
                     ,[["pos16"],5]]
-    if mode == "single":
-        p1 = [True, 0, 0, "p1", AI_Minimax(7, pruning=True)]
-    elif mode == "multi":
-        p1 = [True, 0, 0, "p1"]
-    p2 = [False, 0, 0, "p2"]
+    # if mode == "single":
+    #     p1 = [True, 0, 0, "p1", AI_Negamax(7, pruning=True)]
+    # elif mode == "multi":
+    #     p1 = [True, 0, 0, "p1"]
+    p1 = [True, 0, 0, "p1", AI_Minimax(7, maximizingPlayer=True, pruning=True)]
+    p2 = [False, 0, 0, "p2", AI_Negamax(7, player=-1, pruning=True)]
     playing = [] #for in-game
     not_playing = [] #for in-game
 
@@ -48,6 +49,7 @@ def game(mode="single"):
             else:
                 p2[2] = 1
                 print("Player 2 wins")
+            print(congklak_data)
             running = False
 
         else:
@@ -79,13 +81,13 @@ def game(mode="single"):
                 
                 index_not_allowed = True
                 while index_not_allowed: #to check if the taken hole is valid
-                    if mode == "multi" or playing[3] == "p2":
-                        chosen_index = int(input("Choose which small hole you want to take: ")) - 1
-                    elif mode == "single" and playing[3] == "p1":
-                        print("Ori:", congklak_data)
-                        chosen_index = playing[4].commitMove(congklak_data)
-                        print("Ori:", congklak_data, "\nChosen index:", chosen_index)
-
+                    # if mode == "multi" or playing[3] == "p2":
+                    #     chosen_index = int(input("Choose which small hole you want to take: ")) - 1
+                    # elif mode == "single" and playing[3] == "p1":
+                    #     print("Ori:", congklak_data)
+                    #     chosen_index = playing[4].commitMove(congklak_data)
+                    #     print("Ori:", congklak_data, "\nChosen index:", chosen_index)
+                    chosen_index = playing[4].commitMove(congklak_data)
                     if chosen_index > 15:
                         print("index out of bound")
                         continue
