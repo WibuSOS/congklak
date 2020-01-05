@@ -1,14 +1,12 @@
-import pygame
-import sys
-from pygame.mixer import *
 # import time
 # import random
-from assets import *
-from settings import Settings
+import sys
+from pygame import *
 from AI import *
+from assets import *
 
-# def game(screen,screen_width,screen_height):
-def game(mode="single"):
+def game(screen, screen_width, screen_height, mode="single"):
+# def game(mode="single"):
     
     # Data structure
     congklak_data = [[["pos1"],0],[["pos2"],5],[["pos3"],5],[["pos4"],5],[["pos5"],5]
@@ -19,12 +17,26 @@ def game(mode="single"):
     #     p1 = [True, 0, 0, "p1", AI_Negamax(7, pruning=True)]
     # elif mode == "multi":
     #     p1 = [True, 0, 0, "p1"]
-    p1 = [True, 0, 0, "p1", AI_Minimax(7, maximizingPlayer=True, pruning=True)]
-    p2 = [False, 0, 0, "p2", AI_Negamax(7, player=-1, pruning=True)]
+    p1 = [True, 0, 0, "p1", AI_Negamax(7, player=1, pruning=True)]
+    p2 = [False, 0, 0, "p2", AI_Minimax(7, maximizingPlayer=False, pruning=True)]
     playing = [] #for in-game
     not_playing = [] #for in-game
 
     #entar untuk sprites maybe tiap lubang buat jadi 1 grup, instead of 1 whole big group(?)
+    congklakBoard = Board(screen)
+    bijiGroup = Group(Biji("images/bijicongklak.png", screen.get_rect().center))
+    testing = True
+    while testing:
+        screen.fill((255,255,255))
+        congklakBoard.blitme()
+        bijiGroup.draw(screen)
+        display.update()
+
+        for command in event.get():
+            if command.type == QUIT:
+                testing = False
+                # pygame.quit()
+                return pygame.quit()
     
     running = True
     while running:
