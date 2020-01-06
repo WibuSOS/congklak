@@ -11,12 +11,15 @@ def game(screen, screen_width, screen_height, mode="single"):
                     ,[[790,160],5],[[960,160],5],[[1130,160],5],[[1120,370],0],[[130,590],5]
                     ,[[290,590],5],[[460,590],5],[[630,590],5],[[790,590],5],[[960,590],5]
                     ,[[1130,590],5]]
-    # if mode == "single":
-    #     p1 = [True, 0, 0, "p1", AI_Negamax(7, pruning=True)]
-    # elif mode == "multi":
-    #     p1 = [True, 0, 0, "p1"]
-    p1 = [True, 0, 0, "p1", AI_Negamax(7, player=1, pruning=True)]
-    p2 = [False, 0, 0, "p2", AI_Minimax(7, maximizingPlayer=False, pruning=True)]
+    if mode == "single":
+        p1 = [True, 0, 0, "p1", AI_Minimax(7, maximizingPlayer=True, pruning=True)]
+        p2 = [False, 0, 0, "p2"]
+    elif mode == "multi":
+        p1 = [True, 0, 0, "p1"]
+        p2 = [False, 0, 0, "p2"]
+    elif mode == "AI":
+        p1 = [True, 0, 0, "p1", AI_Negamax(7, player=1, pruning=True)]
+        p2 = [False, 0, 0, "p2", AI_Minimax(7, maximizingPlayer=False, pruning=True)]
     playing = [] #for in-game
     not_playing = [] #for in-game
 
@@ -123,13 +126,12 @@ def game(screen, screen_width, screen_height, mode="single"):
                 
                 index_not_allowed = True
                 while index_not_allowed: #to check if the taken hole is valid
-                    # if mode == "multi" or playing[3] == "p2":
-                    #     chosen_index = int(input("Choose which small hole you want to take: ")) - 1
-                    # elif mode == "single" and playing[3] == "p1":
-                    #     print("Ori:", congklak_data)
-                    #     chosen_index = playing[4].commitMove(congklak_data)
-                    #     print("Ori:", congklak_data, "\nChosen index:", chosen_index)
-                    chosen_index = playing[4].commitMove(congklak_data)
+                    if mode == "AI" or (mode == "single" and playing[3] == "p1"):
+                        chosen_index = playing[4].commitMove(congklak_data)
+                        print("Ori:", congklak_data, "\nChosen index:", chosen_index)
+                    elif mode == "multi" or playing[3] == "p2":
+                        chosen_index = int(input("Choose which small hole you want to take: ")) - 1
+                    
                     if chosen_index > 15:
                         print("index out of bound")
                         continue
