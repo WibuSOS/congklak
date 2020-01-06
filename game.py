@@ -1,5 +1,3 @@
-# import time
-# import random
 import sys
 from pygame import *
 from AI import *
@@ -9,10 +7,10 @@ def game(screen, screen_width, screen_height, mode="single"):
 # def game(mode="single"):
     
     # Data structure
-    congklak_data = [[["pos1"],0],[["pos2"],5],[["pos3"],5],[["pos4"],5],[["pos5"],5]
-                    ,[["pos6"],5],[["pos7"],5],[["pos8"],5],[["pos9"],0],[["pos10"],5]
-                    ,[["pos11"],5],[["pos12"],5],[["pos13"],5],[["pos14"],5],[["pos15"],5]
-                    ,[["pos16"],5]]
+    congklak_data = [[[145,370],0],[[130,160],5],[[290,160],5],[[460,160],5],[[630,160],5]
+                    ,[[790,160],5],[[960,160],5],[[1130,160],5],[[1120,370],0],[[130,590],5]
+                    ,[[290,590],5],[[460,590],5],[[630,590],5],[[790,590],5],[[960,590],5]
+                    ,[[1130,590],5]]
     # if mode == "single":
     #     p1 = [True, 0, 0, "p1", AI_Negamax(7, pruning=True)]
     # elif mode == "multi":
@@ -22,24 +20,56 @@ def game(screen, screen_width, screen_height, mode="single"):
     playing = [] #for in-game
     not_playing = [] #for in-game
 
-    #entar untuk sprites maybe tiap lubang buat jadi 1 grup, instead of 1 whole big group(?)
+    # Sprites
     congklakBoard = Board(screen)
-    bijiGroup = Group(Biji("images/bijicongklak.png", screen.get_rect().center))
+
+    house0 = Seed('images/bijicongklak.png', congklak_data[0][0])
+    hole1 = Seed('images/bijicongklak.png', congklak_data[1][0])
+    hole2 = Seed('images/bijicongklak.png', congklak_data[2][0])
+    hole3 = Seed('images/bijicongklak.png', congklak_data[3][0])
+    hole4 = Seed('images/bijicongklak.png', congklak_data[4][0])
+    hole5 = Seed('images/bijicongklak.png', congklak_data[5][0])
+    hole6 = Seed('images/bijicongklak.png', congklak_data[6][0])
+    hole7 = Seed('images/bijicongklak.png', congklak_data[7][0])
+    house8 = Seed('images/bijicongklak.png', congklak_data[8][0])
+    hole9 = Seed('images/bijicongklak.png', congklak_data[9][0])
+    hole10 = Seed('images/bijicongklak.png', congklak_data[10][0])
+    hole11 = Seed('images/bijicongklak.png', congklak_data[11][0])
+    hole12 = Seed('images/bijicongklak.png', congklak_data[12][0])
+    hole13 = Seed('images/bijicongklak.png', congklak_data[13][0])
+    hole14 = Seed('images/bijicongklak.png', congklak_data[14][0])
+    hole15 = Seed('images/bijicongklak.png', congklak_data[15][0])
+    
+    congklakSeeds = Group(hole1,hole2,hole3,hole4,hole5,hole6,hole7,hole9,hole10,hole11,hole12,hole13,hole14,hole15)
+    seed_data = []
+    seedScores = Group()
+
+    for data in congklak_data:
+        x = data[0][0]
+        y = data[0][1] + 40
+        score = SeedScore([x,y], data[1])
+        seed_data.append(score)
+        seedScores.add(score)
+    
     testing = True
     while testing:
         screen.fill((255,255,255))
         congklakBoard.blitme()
-        bijiGroup.draw(screen)
-        display.update()
+        congklakSeeds.draw(screen)
+        seedScores.draw(screen)
 
         for command in event.get():
             if command.type == QUIT:
                 testing = False
                 # pygame.quit()
                 return pygame.quit()
+            elif command.type == MOUSEBUTTONDOWN and command.button == 1:
+                print(mouse.get_pos())
+        
+        display.update()
     
     running = True
-    while running:
+    while running: # TODO GUI
         small_holes = 0 #total number of shells in all small holes
         index_hole = 0
         
@@ -139,36 +169,36 @@ def game(screen, screen_width, screen_height, mode="single"):
                             debug(chosen_index, playing, congklak_data, "test kalo biji jatuh di tempat yang ada bijinya")
                             continue
                         elif playing[3] == "p1":
-                            if chosen_index > 8 and chosen_index <= 15 and congklak_data[chosen_index][1] == 0: #lubang kosong lawan -> end
+                            if chosen_index > 8 and chosen_index <= 15 and congklak_data[chosen_index][1] == 0: #hole kosong lawan -> end
                                 playing_for_turn = False
                                 pass
                             elif chosen_index > 0 and chosen_index < 8 and congklak_data[chosen_index][1] == 0:
-                                #lubang kosong pemain saat ini -> ambil milik lawan seberang -> masukkan ke dalam markas pemain saat ini -> end
+                                #hole kosong pemain saat ini -> ambil milik lawan seberang -> masukkan ke dalam markas pemain saat ini -> end
                                 congklak_data[0][1] = congklak_data[0][1] + playing[1] + congklak_data[-abs(chosen_index)][1]
                                 playing[1] = 0
                                 congklak_data[chosen_index][1] = 0
                                 congklak_data[-abs(chosen_index)][1] = 0
                                 playing_for_turn = False
-                                debug_1(chosen_index, -abs(chosen_index), playing, congklak_data, "test kalo jatuh di lubang kecil yang main")
+                                debug_1(chosen_index, -abs(chosen_index), playing, congklak_data, "test kalo jatuh di hole kecil yang main")
                                 continue
                             elif chosen_index == 0:
-                                #lubang terakhir == markas pemain saat ini -> pilih lubang untuk bermain lagi -> mulai dari index berikutnya
+                                #hole terakhir == markas pemain saat ini -> pilih hole untuk bermain lagi -> mulai dari index berikutnya
                                 pass
                         elif playing[3] == "p2":
-                            if chosen_index > 0 and chosen_index < 8 and congklak_data[chosen_index][1] == 0: #lubang kosong lawan -> end
+                            if chosen_index > 0 and chosen_index < 8 and congklak_data[chosen_index][1] == 0: #hole kosong lawan -> end
                                 playing_for_turn = False
                                 pass
                             elif chosen_index > 8 and chosen_index <= 15 and congklak_data[chosen_index][1] == 0:
-                                #lubang kosong pemain saat ini -> ambil milik lawan seberang -> masukkan ke dalam markas pemain saat ini -> end
+                                #hole kosong pemain saat ini -> ambil milik lawan seberang -> masukkan ke dalam markas pemain saat ini -> end
                                 congklak_data[8][1] = congklak_data[8][1] + playing[1] + congklak_data[len(congklak_data) - chosen_index][1]
                                 playing[1] = 0
                                 congklak_data[chosen_index][1] = 0
                                 congklak_data[len(congklak_data) - chosen_index][1] = 0
                                 playing_for_turn = False
-                                debug_1(chosen_index, len(congklak_data) - chosen_index, playing, congklak_data, "test kalo jatuh di lubang kecil yang main")
+                                debug_1(chosen_index, len(congklak_data) - chosen_index, playing, congklak_data, "test kalo jatuh di hole kecil yang main")
                                 continue
                             elif chosen_index == 8:
-                                #lubang terakhir == markas pemain saat ini -> pilih lubang untuk bermain lagi -> mulai dari index berikutnya
+                                #hole terakhir == markas pemain saat ini -> pilih hole untuk bermain lagi -> mulai dari index berikutnya
                                 pass
 
                     congklak_data[chosen_index][1] += 1

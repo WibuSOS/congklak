@@ -1,6 +1,7 @@
 import pygame.font
 from pygame import *
 from pygame.sprite import *
+from pygame.font import *
 
 class Button(Sprite):
     def __init__(self, imagefile, pos, x_size, y_size, oversize_x, oversize_y):
@@ -38,7 +39,7 @@ class Board(Sprite):
     def blitme(self):
         self.screen.blit(self.image, self.rect)
 
-class Biji(Sprite):
+class Seed(Sprite):
     def __init__(self, imagefile, position):
         Sprite.__init__(self)
         self.image = image.load(imagefile)
@@ -48,3 +49,31 @@ class Biji(Sprite):
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+class SeedScore(Sprite):
+    def __init__(self, position, score):
+        Sprite.__init__(self)
+        self.position = position
+        self.font = SysFont(None,30)
+        self.score = score
+        self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = position
+    
+    def plus(self):
+        self.score += 1
+        self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+    
+    def minus(self):
+        self.score -= 1
+        self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+    
+    def reset(self):
+        self.score = 0
+        self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position

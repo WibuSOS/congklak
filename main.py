@@ -1,8 +1,6 @@
 import pygame
 import sys
 from pygame.mixer import *
-# import time
-# import random
 from settings import Settings
 from assets import *
 from game import *
