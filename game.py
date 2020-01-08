@@ -17,8 +17,8 @@ def game(screen, screen_width, screen_height, mode="single"):
         p1 = [True, 0, 0, "p1"]
         p2 = [False, 0, 0, "p2"]
     elif mode == "AI":
-        p1 = [True, 0, 0, "p1", AI_Negamax(7, player=1, pruning=True)]
-        p2 = [False, 0, 0, "p2", AI_Minimax(7, maximizingPlayer=False, pruning=True)]
+        p1 = [True, 0, 0, "p1", AI_Negamax(3, player=1, pruning=True)]
+        p2 = [False, 0, 0, "p2", AI_Minimax(3, maximizingPlayer=False, pruning=True)]
     playing = [] #for in-game
     not_playing = [] #for in-game
 
@@ -84,7 +84,8 @@ def game(screen, screen_width, screen_height, mode="single"):
                 print("Player 2 wins")
             print(congklak_data)
             running = False
-        
+            time.delay(5000)
+            continue
         else:
             if p1[0]: #to check which player goes for this turn
                 playing = p1
