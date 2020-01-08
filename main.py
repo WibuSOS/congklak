@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 from pygame.mixer import *
 from settings import Settings
 from assets import *
@@ -18,9 +19,11 @@ def main():
     background = pygame.image.load('images/menubag.png')
 
     #Buttons & signs
-    start = Button("images/play.png",[100,500],*[93,46],*[100,56])
-    terminate = Button("images/quit.png",[100,600],*[95,46],*[102,56])
-    menu = Group(start,terminate)
+    single = Button("images/button_single.png",[100,300],*[93,46],*[100,56])
+    multi = Button("images/button_multi.png",[100,400],*[93,46],*[100,56])
+    AI = Button("images/button_ai.png",[100,500],*[93,46],*[100,56])
+    terminate = Button("images/button_quit.png",[100,600],*[95,46],*[102,56])
+    menu = Group(single,multi,AI,terminate)
     
     running = True
     while running:
@@ -31,28 +34,46 @@ def main():
             if command.type == QUIT:
                 running = False
                 pygame.quit()
-            
+
             if command.type == MOUSEBUTTONDOWN and command.button == 1:
-                if start.rect.collidepoint(mouse.get_pos()):
+                if single.rect.collidepoint(mouse.get_pos()):
                     try:
-                        game(screen, game_settings.screen_width, game_settings.screen_height) #execute game function
+                        game(screen, game_settings.screen_width, game_settings.screen_height, mode="single") #execute game function
                     except (TypeError,AttributeError):
                         pass
                     # music.set_volume(0.2) #set bg music back to normal
-                
+                if multi.rect.collidepoint(mouse.get_pos()):
+                    try:
+                        game(screen, game_settings.screen_width, game_settings.screen_height, mode="multi") #execute game function
+                    except (TypeError,AttributeError):
+                        pass
+                if AI.rect.collidepoint(mouse.get_pos()):
+                    try:
+                        game(screen, game_settings.screen_width, game_settings.screen_height, mode="AI") #execute game function
+                    except (TypeError,AttributeError):
+                        pass
+
                 elif terminate.rect.collidepoint(mouse.get_pos()):
                     running = False
                     pygame.quit()
-        
-        if start.rect.collidepoint(mouse.get_pos()):
-            start.mouseover()
+
+        if single.rect.collidepoint(mouse.get_pos()):
+            single.mouseover()
         else:
-            start.mouseout()
+            single.mouseout()
+        if multi.rect.collidepoint(mouse.get_pos()):
+            multi.mouseover()
+        else:
+            multi.mouseout()
+        if AI.rect.collidepoint(mouse.get_pos()):
+            AI.mouseover()
+        else:
+            AI.mouseout()
         if terminate.rect.collidepoint(mouse.get_pos()):
             terminate.mouseover()
         else:
             terminate.mouseout()
-        
+
         display.update()
 
 if __name__ == "__main__":

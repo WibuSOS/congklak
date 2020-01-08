@@ -91,7 +91,7 @@ class AI_Minimax:
         self.expandedNode += 1
         self.debugPrint(maximizingPlayer, depth)
         if self.terminalCheck(depth, node):
-            return self.heuristicNode(node, maximizingPlayer), [None] # the heuristic value of node
+            return self.heuristicNode(node, self.maximizingPlayer), [None] # the heuristic value of node
         
         if maximizingPlayer:
             bestValue = -infinity
@@ -264,7 +264,7 @@ class AI_Negamax(AI_Minimax):
         self.expandedNode += 1
         self.debugPrint(maximizingPlayer, depth)
         if self.terminalCheck(depth, node):
-            return player * self.heuristicNode(node, maximizingPlayer), [None] # the heuristic value of node
+            return player * self.heuristicNode(node, self.maximizingPlayer), [None] # the heuristic value of node
         
         bestValue = -infinity
         bestDirection = []
