@@ -52,11 +52,10 @@ def main():
                         game(screen, game_settings.screen_width, game_settings.screen_height, mode="AI") #execute game function
                     except (TypeError,AttributeError):
                         pass
-
                 elif terminate.rect.collidepoint(mouse.get_pos()):
                     running = False
                     pygame.quit()
-
+        
         if single.rect.collidepoint(mouse.get_pos()):
             single.mouseover()
         else:

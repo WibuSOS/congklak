@@ -25,9 +25,6 @@ def game(screen, screen_width, screen_height, mode="single"):
     # Sprites
     sleepTime = 1000
     congklakBoard = Board(screen)
-
-
-
     house0 = Seed('images/bijicongklak.png', congklak_data[0][0])
     hole1 = Seed('images/bijicongklak.png', congklak_data[1][0])
     hole2 = Seed('images/bijicongklak.png', congklak_data[2][0])
@@ -58,12 +55,11 @@ def game(screen, screen_width, screen_height, mode="single"):
         seedScores.add(score)
     
     running = True
-    while running: # TODO GUI
+    while running:
         screen.fill((255,255,255))
         congklakBoard.blitme()
         congklakSeeds.draw(screen)
         seedScores.draw(screen)
-
         display.update()
 
         small_holes = 0 #total number of shells in all small holes
