@@ -77,3 +77,16 @@ class SeedScore(Sprite):
         self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))
         self.rect = self.image.get_rect()
         self.rect.center = self.position
+
+class Player(Sprite):
+    def __init__(self, position, player):
+        Sprite.__init__(self)
+        self.position = position
+        self.font = SysFont(None,30)
+        self.player = player
+        self.image = self.font.render("Player: %s" % self.player,True,(0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = position
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)

@@ -23,9 +23,8 @@ def game(screen, screen_width, screen_height, mode="single"):
     not_playing = [] #for in-game
 
     # Sprites
-    sleepTime = 2000
+    sleepTime = 1000
     congklakBoard = Board(screen)
-    # playerturn = Player([x,y], p1)
     house0 = Seed('images/bijicongklak.png', congklak_data[0][0])
     hole1 = Seed('images/bijicongklak.png', congklak_data[1][0])
     hole2 = Seed('images/bijicongklak.png', congklak_data[2][0])
@@ -56,7 +55,7 @@ def game(screen, screen_width, screen_height, mode="single"):
         seedScores.add(score)
     
     running = True
-    while running: # TODO GUI
+    while running:
         screen.fill((255,255,255))
         congklakBoard.blitme()
         congklakSeeds.draw(screen)
@@ -94,6 +93,7 @@ def game(screen, screen_width, screen_height, mode="single"):
                 playing = p2
                 not_playing = p1
 
+            playerturn = Player([60,20], playing[3])
             playing_for_turn = True
             while playing_for_turn:
                 print("Player:", playing[3])
@@ -101,6 +101,7 @@ def game(screen, screen_width, screen_height, mode="single"):
                 congklakBoard.blitme()
                 congklakSeeds.draw(screen)
                 seedScores.draw(screen)
+                playerturn.draw(screen)
                 display.update()
 
                 small_holes = 0 #total number of shells in current player's small holes
@@ -124,6 +125,7 @@ def game(screen, screen_width, screen_height, mode="single"):
                     congklakBoard.blitme()
                     congklakSeeds.draw(screen)
                     seedScores.draw(screen)
+                    playerturn.draw(screen)
                     display.update()
 
                     if mode == "AI" or (mode == "single" and playing[3] == "p1"):
@@ -198,6 +200,7 @@ def game(screen, screen_width, screen_height, mode="single"):
                     congklakBoard.blitme()
                     congklakSeeds.draw(screen)
                     seedScores.draw(screen)
+                    playerturn.draw(screen)
                     display.update()
 
                     chosen_index += 1
