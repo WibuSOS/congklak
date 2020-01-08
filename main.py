@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 from pygame.mixer import *
 from settings import Settings
 from assets import *
@@ -35,7 +36,7 @@ def main():
             if command.type == MOUSEBUTTONDOWN and command.button == 1:
                 if start.rect.collidepoint(mouse.get_pos()):
                     try:
-                        game(screen, game_settings.screen_width, game_settings.screen_height) #execute game function
+                        game(screen, game_settings.screen_width, game_settings.screen_height, mode="single") #execute game function
                     except (TypeError,AttributeError):
                         pass
                     # music.set_volume(0.2) #set bg music back to normal
