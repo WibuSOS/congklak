@@ -60,6 +60,12 @@ class SeedScore(Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = position
     
+    def add(self, score):
+        self.score += score
+        self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+    
     def plus(self):
         self.score += 1
         self.image = self.font.render("Seed: %s" % self.score,True,(0,0,0))

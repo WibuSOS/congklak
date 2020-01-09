@@ -64,7 +64,7 @@ class AI_Minimax:
         else:
             return False
     
-    def heuristicNode(self, node, maximizingPlayer): # TODO ubah heuristic agar bisa dipakai di 2 sisi
+    def heuristicNode(self, node, maximizingPlayer):
         if maximizingPlayer:
             return node[0][1]
         else:
@@ -78,6 +78,9 @@ class AI_Minimax:
         bestValue, bestDirection = self.minimax(node, self.depth, self.maximizingPlayer, childFreeTurn, [child_possibilities, child_data])
         print("commitMove:", bestValue, bestDirection)
         return bestDirection.pop(0)
+    
+    def getExpandedNode(self):
+        return self.expandedNode
     
     def debugPrint(self, maximizingPlayer, depth):
         if maximizingPlayer:
@@ -249,7 +252,7 @@ class AI_Negamax(AI_Minimax):
         print("commitMove:", bestValue, bestDirection)
         return bestDirection.pop(0)
     
-    def heuristicNode(self, node, maximizingPlayer): # TODO ubah heuristic agar bisa dipakai di 2 sisi
+    def heuristicNode(self, node, maximizingPlayer):
         if maximizingPlayer:
             return node[0][1]
         else:

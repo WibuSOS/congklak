@@ -1,6 +1,6 @@
 import pygame
 import sys
-import time
+import time as clock
 from pygame.mixer import *
 from settings import Settings
 from assets import *
