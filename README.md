@@ -34,3 +34,19 @@ The game of Congklak has long been developing in Asia, especially the Malay regi
 - Statistical information about player’s movements and AI’s predictions.
 
 - General information & how to play.
+
+# References
+Minimax algorithm:
+https://stackoverflow.com/questions/16656976/how-to-adapt-my-minimax-search-tree-to-deal-with-no-term-based-game
+https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
+https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
+
+Negamax algorithm:
+https://medium.com/@indykidd/joys-of-minimax-and-negamax-ee5e456977e2
+https://en.wikipedia.org/wiki/Negamax
+
+Alpha-Beta Pruning:
+https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
+
+Sprites:
+http://i1.ytimg.com/vi/pxT4BbsdybY/maxresdefault.jpg
